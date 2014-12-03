@@ -1,0 +1,27 @@
+---
+title: "Different types of analytics"
+output: html_document
+---
+
+##Descriptive analysis
+* Just describe the data
+* E.g. census data or google Ngram Viewer
+
+##Exploratory analysis
+* Discovering new connections
+* Is NOT predicting -> Correlation does not imply causation
+
+##Inferential analysis
+* Use a small sample to say something about a bigger population 
+* Commonly the goal of statistical models
+
+##Predictivve analysis
+* Use data on some objects to predict values on another object
+* If x predicts y it does not mean that x causes y
+* Depends heavily on measuring the right variables
+* E.g. predict that a customer is pregnant of what she buys
+
+##Causal analysis
+* Find out what habbens to one variable when you make another variable change
+* Randomized studies
+* E.g. Effects of drugs

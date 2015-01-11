@@ -1,0 +1,28 @@
+---
+title: "Vectorized Operations"
+output: html_document
+---
+Like most computational languages, R has vectorized operations.
+
+##Vectors
+```{r}
+x <- 1:4
+y <- 5:8
+
+x + y # add element-by-elemet
+x > 2 # boolean operation element wise
+x / 2 # division element-by-element
+x * y # multiplication element by element (other than MATLAB)
+x %*% y # scalar product
+```
+#Matrices
+```{r}
+x <- matrix(1:4, 2, 2)
+y <- matrix(5:8, 2, 2)
+
+x + y # add element-by-elemet
+x > 2 # boolean operation element wise
+x / 2 # division element-by-element
+x * y # multiplication element-by-element (NOT matrix multiplication)
+x %*% y # true matric multiplication
+```

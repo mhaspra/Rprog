@@ -1,0 +1,14 @@
+---
+title: "Data loading"
+output: html_document
+---
+##Reading
+Reading data can be done with a number of different functions
+
+* read.table for reading tabular data
+* readLines for reading lines of a text file
+* read.csv for reading tabular data
+* source for reading R code files
+* dget for R code files
+* load for reading in saved workspaces
+* unserialize 

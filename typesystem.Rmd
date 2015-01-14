@@ -1,0 +1,119 @@
+---
+title: "Typesystem"
+output: html_document
+---
+
+
+###Vectors
+The basic unit of data in R is the vector. (Even a single integer is represented as a vector of length 1)
+
+R has six basic (‘atomic’) vector types:
+
+* logical
+* integer
+* real
+* complex
+* string (or character)
+* raw
+
+```{r}
+str(c(TRUE, FALSE))
+str(c(1L, 2L))
+str(c(1, 1.1))
+str(c(1i, 1+1i))
+str(c('a', 'b'))
+```
+
+###Vector manipulation
+####Creation
+```{r}
+c(1,2,3,5,8) #generate a vector with specific elements
+1:10 # generate a sequence-vector
+vector("numeric", length=10)  # generate a numerical vector of length 10 with default values
+```
+###Functions that help us to explore R objects
+```{r}
+vec <- c(1,2,3)
+str(vec) # structure of an object 
+length(vec) # number of elements or components
+class(vec)  # class or type of an object
+summary(vec) # different information about the object
+attributes(matrix(1:2)) # print attributes of the object
+table(c("a","a","b")) # interpret input data as factors and do a frequency count
+```
+####Automatic coercion
+If you mix the datatypes in the vector R is going to convert them to the least common datatype
+```{r}
+str(c(1,"a")) # 1 is converted to chr
+str(c(TRUE, 1)) # TRUE is converted to num
+```
+###Numbers
+If you just type a number it is always treated as num (real number)
+```{r}
+str(1)
+```
+For explicitly havin an integer, you need the suffix L
+```{r}
+str(1L)
+```
+A special number is Inf, which means infinity
+```{r}
+1/0
+```
+and there is also NaN, which means not a number.
+```{r}
+0/0
+```
+###Data conversations
+You can convert objects to different types with the as.* functions
+```{r}
+vec <- c(1,2,3)
+str(vec)
+as.numeric(vec)
+as.character(vec)
+```
+###Matrices
+Matrices are vector with a dimension attribute.
+```{r}
+mat <- matrix(nrow = 3, ncol = 4) # create a matix of dimension 3x4
+mat
+attributes(mat) # The dim attribute is itself a vector of lenght 2
+dim(mat) # Get the dimension of the matrix
+mat <- matrix(1:12, nrow = 3, ncol = 4) # Matrices are constructed by filling it column by column
+mat
+cbind(1:3, 6:8) # create a matrix by binding two column vectors together
+rbind(1:3, 6:8) # create a matrix by binding two row vectors together
+```
+###Lists
+Special types of vectors that can contain different types
+```{r}
+l <- list(1, "a", TRUE, 1+1i)
+l
+```
+###Factors
+Factors are used to represent categorical data. They can be ordered or unordered.
+```{r}
+facts <- factor(c("big","medium","small","big", "small"))
+facts
+table(facts) # Get a frequency count of the labels
+facts <- factor(c("big","medium","small","big", "small"),
+                levels = c("small", "medium", "big")) # construct factors with specific label ordering
+facts
+```
+###Missing Values
+Missing values are denoted by NA or NaN
+```{r}
+is.na(NA) # function to test for NA of an object
+is.nan(NaN) # function to test for NaN of an object
+is.na(NaN) # NaN are also NA
+is.nan(NA) # but NA are not NaN
+is.na(c(1, NA, 2)) # produce a logical vector that indicates wether an element is NA or not
+```
+###Data Frames
+Data frames are used to store tabular data.
+```{r}
+df <- data.frame(nr = 1:3, name = c("John", "Joe", "Jamie")) # construct a simple dataframe
+df
+nrow(df) # number of rows
+ncol(df) # number of columns
+```

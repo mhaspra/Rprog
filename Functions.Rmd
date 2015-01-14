@@ -1,0 +1,83 @@
+---
+title: "Functions"
+output: html_document
+---
+###Function Definition
+
+Functions are written like below (usually in their own file). The value of the last statement gets returned.
+
+```{r}
+myAdd <- function(x, y){
+  x + y
+}
+
+myAdd(2,3)
+```
+
+Functions are first class objects and functions can be nested.
+
+Parameters can also have default values.
+
+```{r}
+above <- function(x, n = 10){
+  x[x>n]
+}
+
+above(1:20,3)
+above(1:20)
+```
+
+###Argument Matching
+Arguments can be matched by position or by name (or by a mixture of that)
+```{r}
+myAdd <- function(x, y){
+  x + y
+}
+
+myAdd(2,3)
+myAdd(y = 3, x = 2)
+```
+
+That is usefull for functions with long argument lists where one does not want to specify all parameters
+```{r}
+args(lm)
+```
+
+Arguments can also be partially matched
+```{r}
+myAdd <- function(myLongParameterNamme, y){
+  myLongParameterNamme + y
+}
+
+myAdd(y = 3, m = 2)
+```
+
+The matching order is:
+
+* Exact match by name
+* Partial match by name
+* Match by position
+
+###Argument Evaluation
+
+Arguments are evaluated lazily. So the following does not lead to an error
+```{r}
+myFun <- function(x, y){
+  x^2
+}
+
+myFun(3)
+```
+
+### The "..." Argument
+
+... indicates a variable number of arguments. Usually that is used to pass them to another function.
+```{r}
+pasteWithDashes <- function(...){
+  paste(..., sep="-")
+}
+
+pasteWithDashes('a', 'b', 'c')
+```
+
+Everything after ... argument must be named explicitely.

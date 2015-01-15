@@ -125,6 +125,87 @@ myFun(3)</code></pre>
 
 pasteWithDashes('a', 'b', 'c')</code></pre>
 <pre><code>## [1] &quot;a-b-c&quot;</code></pre>
+<p>Everything after … argument must be named explicitely.</p>
+</div>
+<div id="environments" class="section level3">
+<h3>Environments</h3>
+<div id="from-the-r-language-definition" class="section level5">
+<h5>From the R Language Definition</h5>
+<p>Environments can be thought of as consisting of two things: a frame, which is a set of symbol-value pairs, and an enclosure, a pointer to an enclosing environment. When R looks up the value for a symbol the frame is examined and if a matching symbol is found its value will be returned. If not, the enclosing environment is then accessed and the process repeated. Environments form a tree structure in which the enclosures play the role of parents. The tree of environments is rooted in an empty environment, available through emptyenv(), which has no parent.</p>
+<p>So environments are a place to store variables. If ones starts up r and makes an assignment a variable in the global environment:</p>
+<pre class="r"><code>rm(list = ls())
+a &lt;- 1
+ls()</code></pre>
+<pre><code>## [1] &quot;a&quot;</code></pre>
+<pre class="r"><code>ls(globalenv())</code></pre>
+<pre><code>## [1] &quot;a&quot;</code></pre>
+</div>
+</div>
+<div id="functions-and-environments-lexical-scoping" class="section level3">
+<h3>Functions and Environments (Lexical Scoping)</h3>
+<div id="from-the-r-language-definition-1" class="section level5">
+<h5>From the R Language Definition</h5>
+<p>Functions (or more precisely, function closures) have three basic components: a formal argument list, a body and an environment. […] A function’s environment is the environment that was active at the time that the function was created. […] When a function is called, a new environment (called the evaluation environment) is created, whose enclosure is the environment from the function closure. This new environment is initially populated with the unevaluated arguments to the function; as evaluation proceeds, local variables are created within it.</p>
+<p>Lets create a function within a function and see what environments are created:</p>
+<pre class="r"><code>rm(list = ls())
+
+f &lt;- function(){
+  g &lt;- function(){
+  }
+}
+f()
+environment(f)</code></pre>
+<pre><code>## &lt;environment: R_GlobalEnv&gt;</code></pre>
+<p>The invornment of f is the global environenment:</p>
+<pre class="r"><code>environment(f)</code></pre>
+<pre><code>## &lt;environment: R_GlobalEnv&gt;</code></pre>
+<p>The environment of g however is the environment created when f was called:</p>
+<pre class="r"><code>g &lt;- f()
+environment(g)</code></pre>
+<pre><code>## &lt;environment: 0x0000000007cc55e8&gt;</code></pre>
+<p>The parent of g’s environment is f’s environment which is the global environment again:</p>
+<pre class="r"><code>parent.env(environment(g))</code></pre>
+<pre><code>## &lt;environment: R_GlobalEnv&gt;</code></pre>
+</div>
+<div id="lexical-scoping" class="section level4">
+<h4>Lexical Scoping</h4>
+<p>That now gets interesting together with free variables in functions:</p>
+<pre class="r"><code>rm(list = ls())
+a &lt;- 2000
+b &lt;- 1000
+x &lt;- 1
+f &lt;- function(){
+  a &lt;- 200
+  b &lt;- b &lt;- 100
+  y &lt;- 2
+  g &lt;- function(){
+    a &lt;- 20
+    x + y + a + b
+  }
+}
+g &lt;- f()</code></pre>
+<p>The environments do now contain some variables</p>
+<pre class="r"><code>ls(environment(g))</code></pre>
+<pre><code>## [1] &quot;a&quot; &quot;b&quot; &quot;g&quot; &quot;y&quot;</code></pre>
+<pre class="r"><code>ls(environment(f))</code></pre>
+<pre><code>## [1] &quot;a&quot; &quot;b&quot; &quot;f&quot; &quot;g&quot; &quot;x&quot;</code></pre>
+<p>Note that a and b are contained in different environments but with different values</p>
+<pre class="r"><code>environment(g)$a</code></pre>
+<pre><code>## [1] 200</code></pre>
+<pre class="r"><code>environment(f)$a</code></pre>
+<pre><code>## [1] 2000</code></pre>
+<pre class="r"><code>environment(g)$b</code></pre>
+<pre><code>## [1] 100</code></pre>
+<pre class="r"><code>environment(f)$b</code></pre>
+<pre><code>## [1] 1000</code></pre>
+<p>If we now call g r tries to assign values to the variables for the calculation (x + y + a + b). Therefore it looks through the environments starting with the environment that is created when g is called and if it doesnt find a symbol, it moves up to the parent.</p>
+<pre class="r"><code>g()</code></pre>
+<pre><code>## [1] 123</code></pre>
+<p>If it reaches the empty environment, it throws an exception</p>
+<pre class="r"><code>rm(x)
+g()</code></pre>
+<pre><code>## Error in g(): Objekt 'x' nicht gefunden</code></pre>
+</div>
 </div>
 
 

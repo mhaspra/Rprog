@@ -81,3 +81,89 @@ pasteWithDashes('a', 'b', 'c')
 ```
 
 Everything after ... argument must be named explicitely.
+
+### Environments
+#####From the R Language Definition
+Environments can be thought of as consisting of two things: a frame, which is a set of symbol-value pairs, and an enclosure, a pointer to an enclosing environment. When R looks up the value for a symbol the frame is examined and if a matching symbol is found its value will be returned. If not, the enclosing environment is then accessed and the process repeated. Environments form a tree structure in which the enclosures play the role of parents. The tree of environments is rooted in an empty environment, available through emptyenv(), which has no parent.
+
+So environments are a place to store variables. If ones starts up r and makes an assignment a variable in the global environment:
+```{r}
+rm(list = ls())
+a <- 1
+ls()
+ls(globalenv())
+```
+
+
+
+###Functions and Environments (Lexical Scoping)
+#####From the R Language Definition
+Functions (or more precisely, function closures) have three basic components: a formal argument list, a body and an environment. [...] A function's environment is the environment that was active at the time that the function was created. [...] When a function is called, a new environment (called the evaluation environment) is created, whose enclosure is the environment from the function closure. This new environment is initially populated with the unevaluated arguments to the function; as evaluation proceeds, local variables are created within it.
+
+Lets create a function within a function and see what environments are created:
+
+```{r}
+rm(list = ls())
+
+f <- function(){
+  g <- function(){
+  }
+}
+f()
+environment(f)
+```
+
+The invornment of f is the global environenment:
+```{r}
+environment(f)
+```
+
+The environment of g however is the environment created when f was called:
+```{r}
+g <- f()
+environment(g)
+```
+The parent of g's environment is f's environment which is the global environment again:
+```{r}
+parent.env(environment(g))
+```
+
+####Lexical Scoping
+That now gets interesting together with free variables in functions:
+```{r}
+rm(list = ls())
+a <- 2000
+b <- 1000
+x <- 1
+f <- function(){
+  a <- 200
+  b <- b <- 100
+  y <- 2
+  g <- function(){
+    a <- 20
+    x + y + a + b
+  }
+}
+g <- f()
+```
+The environments do now contain some variables
+```{r}
+ls(environment(g))
+ls(environment(f))
+```
+Note that a and b are contained in different environments but with different values
+```{r}
+environment(g)$a
+environment(f)$a
+environment(g)$b
+environment(f)$b
+```
+If we now call g r tries to assign values to the variables for the calculation (x + y + a + b). Therefore it looks through the environments starting with the environment that is created when g is called and if it doesnt find a symbol, it moves up to the parent.
+```{r}
+g()
+```
+If it reaches the empty environment, it throws an exception
+```{r error=TRUE}
+rm(x)
+g()
+```
